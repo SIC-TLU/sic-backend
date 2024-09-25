@@ -7,6 +7,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { hashPassword } from '@/helpers';
 import { ConfigService } from '@nestjs/config';
 import aqp from 'api-query-params';
+import { getInfo } from '@/utils';
+import ObjectId from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -84,8 +86,17 @@ export class UsersService {
     return { results, totalPage, totalItems };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(_id: string) {
+    if (!ObjectId.isValidObjectId(_id)) {
+      throw new BadRequestException();
+    }
+
+    const result = await this.userModel.findOne({ _id });
+
+    return getInfo({
+      object: result,
+      fields: ['_id', 'username', 'email', 'role', 'isActive'],
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
