@@ -7,8 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { hashPassword } from '@/helpers';
 import { ConfigService } from '@nestjs/config';
 import aqp from 'api-query-params';
-import { getInfo } from '@/utils';
-import ObjectId from 'mongoose';
+import { getInfo, isValidObjectId } from '@/utils';
 
 @Injectable()
 export class UsersService {
@@ -87,7 +86,7 @@ export class UsersService {
   }
 
   async findOne(_id: string) {
-    if (!ObjectId.isValidObjectId(_id)) {
+    if (!isValidObjectId(_id)) {
       throw new BadRequestException();
     }
 
@@ -99,9 +98,30 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log('updateUserDto: ', updateUserDto);
-    return `This action updates a #${id} user`;
+  async update(_id: string, updateUserDto: UpdateUserDto) {
+    if (!isValidObjectId(_id)) {
+      throw new BadRequestException();
+    }
+
+    const { username, email, password, image, role } = updateUserDto;
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    const filter = { _id };
+    const update = { username, email, password: hashedPassword, image, role };
+    const options = { new: true };
+
+    const result = await this.userModel.findOneAndUpdate(
+      filter,
+      update,
+      options,
+    );
+
+    return getInfo({
+      object: result,
+      fields: ['_id', 'username', 'email', 'isActive'],
+    });
   }
 
   remove(id: number) {
