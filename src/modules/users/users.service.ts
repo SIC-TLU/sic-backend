@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
@@ -124,7 +128,17 @@ export class UsersService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException();
+    }
+
+    const hasUser = await this.userModel.findById(id);
+
+    if (!hasUser) {
+      throw new NotFoundException('User not found!');
+    }
+
+    return hasUser.deleteOne();
   }
 }
