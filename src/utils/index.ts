@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import Mongoose from 'mongoose';
 
 export const getInfo = ({
   object,
@@ -18,4 +19,8 @@ export const omitInfo = ({
   fields: string[];
 }) => {
   return _.omit(object, fields);
+};
+
+export const isValidObjectId = (id: string): boolean => {
+  return Mongoose.isValidObjectId(id);
 };
