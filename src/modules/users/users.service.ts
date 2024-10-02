@@ -20,6 +20,10 @@ export class UsersService {
     private configService: ConfigService,
   ) {}
 
+  async findByUsername(username: string) {
+    return await this.userModel.findOne({ username });
+  }
+
   async isUserExist(username: string) {
     const hasUser = await this.userModel.exists({ username });
     if (hasUser) return true;
