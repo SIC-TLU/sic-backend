@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
@@ -12,6 +13,8 @@ import { hashPassword } from '@/helpers';
 import { ConfigService } from '@nestjs/config';
 import aqp from 'api-query-params';
 import { getInfo, isValidObjectId } from '@/utils';
+import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class UsersService {
@@ -144,5 +147,39 @@ export class UsersService {
     }
 
     return hasUser.deleteOne();
+  }
+
+  async handleRegister(registerDto: CreateAuthDto) {
+    const { username, email, password } = registerDto;
+
+    // Check username has exist?
+    const isUsernameExist = await this.isUserExist(username);
+    if (isUsernameExist) {
+      throw new BadRequestException(
+        'Username already exists. Please user another username!',
+      );
+    }
+
+    // Check email has exist?
+    const isEmailExist = await this.isEmailExist(email);
+    if (isEmailExist) {
+      throw new BadRequestException(
+        `Email ${email} already exists. Please use another email!`,
+      );
+    }
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    const user = await this.userModel.create({
+      username,
+      email,
+      password: hashedPassword,
+      isActive: false,
+      codeId: uuidv4(),
+      codeExpired: dayjs().add(30, 'minutes'),
+    });
+
+    return { _id: user._id };
   }
 }
