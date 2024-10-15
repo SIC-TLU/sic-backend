@@ -15,6 +15,7 @@ import aqp from 'api-query-params';
 import { getInfo, isValidObjectId } from '@/utils';
 import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
 import dayjs from 'dayjs';
+import { ROLES } from '@/constant';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +23,10 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<User>,
     private configService: ConfigService,
   ) {}
+
+  async findById(_id: string) {
+    return await this.userModel.findById(_id).lean();
+  }
 
   async findByUsername(username: string) {
     return await this.userModel.findOne({ username });
@@ -176,6 +181,7 @@ export class UsersService {
       email,
       password: hashedPassword,
       isActive: false,
+      role: ROLES.user,
       codeId: uuidv4(),
       codeExpired: dayjs().add(30, 'minutes'),
     });

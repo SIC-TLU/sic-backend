@@ -34,7 +34,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw (
         err ||
         new UnauthorizedException(
-          'token invalid or token not exists in header!',
+          'Token invalid or token not exists in header!',
         )
       );
     }
