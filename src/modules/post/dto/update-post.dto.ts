@@ -1,4 +1,6 @@
-import { IsOptional } from 'class-validator';
+import { STATUS_POST } from '@/constant';
+import { IsEnum, IsOptional } from 'class-validator';
+import { omit } from 'lodash';
 
 export class UpdatePostDto {
   @IsOptional()
@@ -6,4 +8,8 @@ export class UpdatePostDto {
 
   @IsOptional()
   content: string;
+
+  @IsOptional()
+  @IsEnum(omit(STATUS_POST, ['deleted']))
+  status: string;
 }
