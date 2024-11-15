@@ -1,3 +1,4 @@
+import { STATUS_POST } from '@/constant';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 
@@ -12,8 +13,11 @@ export class Post {
   @Prop({ min: 20 })
   content: string;
 
+  @Prop({ default: STATUS_POST.public })
+  status: string;
+
   @Prop({ default: true })
-  isPuclic: boolean;
+  isPublic: boolean;
 
   @Prop({ default: false })
   isDraft: boolean;

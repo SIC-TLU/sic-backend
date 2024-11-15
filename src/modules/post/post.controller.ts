@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Request,
+  Delete,
+} from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { ResponseMessage } from '@/decorator/customize';
@@ -16,13 +24,14 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin)
   @ResponseMessage('Create post successfully')
   create(@Body() createPostDto: CreatePostDto) {
     return this.postService.create(createPostDto);
   }
 
   @Patch(':id')
+  @Roles(Role.Admin)
   @ResponseMessage('Edit post successfully')
   edit(
     @Request() req: RequestWithUser,
@@ -30,5 +39,12 @@ export class PostController {
     @Body() updatePostDto: UpdatePostDto,
   ) {
     return this.postService.edit(req.user._id, postId, updatePostDto);
+  }
+
+  @Delete(':id')
+  @Roles(Role.Admin)
+  @ResponseMessage('Delete post successfully')
+  delet(@Request() req: RequestWithUser, @Param('id') postId: string) {
+    return this.postService.delete(req.user._id, postId);
   }
 }
