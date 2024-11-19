@@ -27,6 +27,10 @@ export class UsersService {
   ) {}
 
   async findById(_id: string) {
+    return await this.userModel.findById(_id);
+  }
+
+  async findByIdLean(_id: string) {
     return await this.userModel.findById(_id).lean();
   }
 
@@ -185,7 +189,7 @@ export class UsersService {
       isActive: false,
       role: ROLES.user,
       codeId: uuidv4(),
-      codeExpired: dayjs().add(30, 'minutes'),
+      codeExpired: dayjs().add(5, 'minutes'),
     });
 
     // Send mail
