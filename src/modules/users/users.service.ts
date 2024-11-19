@@ -16,12 +16,14 @@ import { getInfo, isValidObjectId } from '@/utils';
 import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
 import dayjs from 'dayjs';
 import { ROLES } from '@/constant';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private configService: ConfigService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async findById(_id: string) {
@@ -184,6 +186,17 @@ export class UsersService {
       role: ROLES.user,
       codeId: uuidv4(),
       codeExpired: dayjs().add(30, 'minutes'),
+    });
+
+    // Send mail
+    this.mailerService.sendMail({
+      to: user.email, // List to reciver
+      subject: 'Active your account at SIC', // Subject line
+      template: 'register',
+      context: {
+        name: user?.username ?? user?.email,
+        activationCode: user.codeId,
+      },
     });
 
     return { _id: user._id };
