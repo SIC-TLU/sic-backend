@@ -1,9 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { VerifyAccountDto } from './dto/verify-account.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from '@/modules/users/users.service';
 import { comparePassword } from '@/helpers';
 import { UserType } from './auth';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { isValidObjectId } from '@/utils';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class AuthService {
@@ -38,5 +41,23 @@ export class AuthService {
 
   async handleRegister(registerDto: CreateAuthDto) {
     return await this.usersService.handleRegister(registerDto);
+  }
+
+  async verifyAccount(verifyAccountDto: VerifyAccountDto) {
+    const { _id, codeId } = verifyAccountDto;
+    const validId = isValidObjectId(_id);
+    if (!validId) throw new BadRequestException();
+
+    const foundUser = await this.usersService.findById(_id);
+    if (!foundUser) throw new BadRequestException();
+
+    if (codeId !== foundUser.codeId)
+      throw new BadRequestException('The code invalid or expried!');
+    if (!dayjs().isBefore(foundUser.codeExpired))
+      throw new BadRequestException('The code invalid or expried!');
+
+    await foundUser.updateOne({ isActive: true });
+
+    return {};
   }
 }

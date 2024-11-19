@@ -5,6 +5,7 @@ import { LocalAuthGuard } from './passport/local-auth.guard';
 import { AuthService } from './auth.service';
 import { UserType } from './auth';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { VerifyAccountDto } from './dto/verify-account.dto';
 
 interface RequestWithUser extends ExpressRequest {
   user: UserType;
@@ -24,8 +25,15 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  @ResponseMessage('Register successfully!')
+  @ResponseMessage('Register successfully')
   register(@Body() registerDto: CreateAuthDto) {
     return this.authService.handleRegister(registerDto);
+  }
+
+  @Public()
+  @Post('verify')
+  @ResponseMessage('Verify account successfully')
+  verify(@Body() verifyDto: VerifyAccountDto) {
+    return this.authService.verifyAccount(verifyDto);
   }
 }
