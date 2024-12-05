@@ -107,7 +107,7 @@ export class UsersService {
     return { results, totalPage, totalItems };
   }
 
-  async findOne(_id: string) {
+  async findOneById(_id: string) {
     if (!isValidObjectId(_id)) {
       throw new BadRequestException();
     }
@@ -118,6 +118,10 @@ export class UsersService {
       object: result,
       fields: ['_id', 'username', 'email', 'role', 'isActive'],
     });
+  }
+
+  async findOneByUsername(username: string) {
+    return await this.userModel.findOne({ username });
   }
 
   async update(_id: string, updateUserDto: UpdateUserDto) {
