@@ -17,6 +17,14 @@ async function bootstrap() {
     }),
   );
 
+  // Config Cors
+  app.enableCors({
+    origin: true,
+    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    preflightContinue: false,
+    credentials: true,
+  });
+
   await app.listen(PORT, () => {
     console.log(`App running in ${HOST}:${PORT}`);
   });

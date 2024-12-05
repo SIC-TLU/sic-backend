@@ -1,5 +1,12 @@
 import { Public, ResponseMessage } from '@/decorator/customize';
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { AuthService } from './auth.service';
@@ -17,6 +24,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
+  @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @ResponseMessage('Login successfully')
   async handleLogin(@Request() req: RequestWithUser) {
@@ -32,6 +40,7 @@ export class AuthController {
 
   @Public()
   @Post('verify')
+  @HttpCode(200)
   @ResponseMessage('Verify account successfully')
   verify(@Body() verifyDto: VerifyAccountDto) {
     return this.authService.verifyAccount(verifyDto);

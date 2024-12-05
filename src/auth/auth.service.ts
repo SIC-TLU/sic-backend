@@ -5,7 +5,6 @@ import { comparePassword } from '@/helpers';
 import { UserType } from './auth';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { isValidObjectId } from '@/utils';
 import dayjs from 'dayjs';
 
 @Injectable()
@@ -44,11 +43,9 @@ export class AuthService {
   }
 
   async verifyAccount(verifyAccountDto: VerifyAccountDto) {
-    const { _id, codeId } = verifyAccountDto;
-    const validId = isValidObjectId(_id);
-    if (!validId) throw new BadRequestException();
+    const { username, codeId } = verifyAccountDto;
 
-    const foundUser = await this.usersService.findById(_id);
+    const foundUser = await this.usersService.findOneByUsername(username);
     if (!foundUser) throw new BadRequestException();
 
     if (codeId !== foundUser.codeId)

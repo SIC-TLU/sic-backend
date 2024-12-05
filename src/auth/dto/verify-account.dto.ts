@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class VerifyAccountDto {
   @IsNotEmpty()
-  _id: string;
+  username: string;
 
   @IsNotEmpty()
   codeId: string;
