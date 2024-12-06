@@ -17,6 +17,7 @@ import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
 import dayjs from 'dayjs';
 import { ROLES } from '@/constant';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ResendCodeDto } from '@/auth/dto/resend-code.dto';
 
 @Injectable()
 export class UsersService {
@@ -36,6 +37,13 @@ export class UsersService {
 
   async findByUsername(username: string) {
     return await this.userModel.findOne({ username });
+  }
+
+  async findEmailByUsername(username: string) {
+    const foundUser = await this.userModel.findOne({ username }).lean();
+    if (!foundUser) throw new BadRequestException('Username not found!');
+
+    return { email: foundUser.email };
   }
 
   async isUserExist(username: string) {
@@ -208,5 +216,30 @@ export class UsersService {
     });
 
     return { _id: user._id };
+  }
+
+  async resendCode(resendCodeDto: ResendCodeDto) {
+    const { email } = resendCodeDto;
+
+    const foundUser = await this.userModel.findOne({ email });
+    if (!foundUser) throw new BadRequestException();
+
+    foundUser.codeId = uuidv4();
+    foundUser.codeExpired = dayjs().add(5, 'minutes').toDate();
+
+    await foundUser.save();
+
+    // Send mail
+    this.mailerService.sendMail({
+      to: foundUser.email, // List to reciver
+      subject: 'Active your account at SIC', // Subject line
+      template: 'register',
+      context: {
+        name: foundUser?.username ?? foundUser?.email,
+        activationCode: foundUser.codeId,
+      },
+    });
+
+    return {};
   }
 }
