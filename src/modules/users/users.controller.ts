@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ResponseMessage } from '@/decorator/customize';
+import { Public, ResponseMessage } from '@/decorator/customize';
+import { GetEmailByUserNameDto } from './dto/get-email.dto';
 
 @Controller('users')
 export class UsersController {
@@ -37,6 +39,15 @@ export class UsersController {
   @ResponseMessage('Get an user successfully')
   findOne(@Param('id') id: string) {
     return this.usersService.findOneById(id);
+  }
+
+  @Public()
+  @Post('get-email-by-username')
+  @HttpCode(200)
+  @ResponseMessage('Get email successfully')
+  getEmailByUsername(@Body() getEmailByUsernameDto: GetEmailByUserNameDto) {
+    const { username } = getEmailByUsernameDto;
+    return this.usersService.findEmailByUsername(username);
   }
 
   @Patch(':id')

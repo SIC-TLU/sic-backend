@@ -6,6 +6,7 @@ import { UserType } from './auth';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import dayjs from 'dayjs';
+import { ResendCodeDto } from './dto/resend-code.dto';
 
 @Injectable()
 export class AuthService {
@@ -56,5 +57,9 @@ export class AuthService {
     await foundUser.updateOne({ isActive: true });
 
     return {};
+  }
+
+  async resendCode(resendCodeDto: ResendCodeDto) {
+    return this.usersService.resendCode(resendCodeDto);
   }
 }

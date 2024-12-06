@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 import { UserType } from './auth';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { VerifyAccountDto } from './dto/verify-account.dto';
+import { ResendCodeDto } from './dto/resend-code.dto';
 
 interface RequestWithUser extends ExpressRequest {
   user: UserType;
@@ -44,5 +45,13 @@ export class AuthController {
   @ResponseMessage('Verify account successfully')
   verify(@Body() verifyDto: VerifyAccountDto) {
     return this.authService.verifyAccount(verifyDto);
+  }
+
+  @Public()
+  @Post('resend-code')
+  @HttpCode(200)
+  @ResponseMessage('Resend code successfully')
+  resendCode(@Body() resendCodeDto: ResendCodeDto) {
+    return this.authService.resendCode(resendCodeDto);
   }
 }
