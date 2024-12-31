@@ -1,0 +1,10 @@
+name: Telegram Notification
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  notify:
+    uses: SIC-TLU/sic-actions/.github/workflows/notify-telegram.yml@main
