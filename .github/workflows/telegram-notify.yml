@@ -1,10 +1,25 @@
-name: Notify Telegram on PR Close
+name: Notify Telegram on PR Merge
 on:
   pull_request:
     types:
       - closed
 
 jobs:
-  notify-telegram:
-    uses: SIC-TLU/sic-actions/.github/workflows/notify-telegram.yml@main
-    secrets: inherit
+  send-notification:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram Notification
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_TOPIC_ID: ${{ secrets.TELEGRAM_TOPIC_ID }}
+        run: |
+          curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "'$TELEGRAM_CHAT_ID'",
+              "message_thread_id": '$TELEGRAM_TOPIC_ID',
+              "text": "🔄 Pull Request #${{ github.event.pull_request.number }} has been merged!\n\nTitle: ${{ github.event.pull_request.title }}\nAuthor: ${{ github.event.pull_request.user.login }}\nURL: ${{ github.event.pull_request.html_url }}",
+              "parse_mode": "Markdown"
+            }'
