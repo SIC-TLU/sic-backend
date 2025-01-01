@@ -1,4 +1,4 @@
-name: Telegram Notification
+name: Notify Telegram on PR Close
 
 on:
   pull_request:
@@ -6,5 +6,9 @@ on:
       - closed
 
 jobs:
-  notify:
+  notify-telegram:
     uses: SIC-TLU/sic-actions/.github/workflows/notify-telegram.yml@main
+    with:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_TOPIC_ID: ${{ secrets.TELEGRAM_TOPIC_ID }}
