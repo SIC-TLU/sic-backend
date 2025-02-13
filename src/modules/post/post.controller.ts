@@ -14,6 +14,7 @@ import { Role, Roles } from '@/decorator/roles.decorator';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Request as ExpressRequest } from 'express';
 import { UserType } from '@/auth/auth';
+import { LikePostDto } from './dto/like-post.dto';
 
 interface RequestWithUser extends ExpressRequest {
   user: UserType;
@@ -28,6 +29,12 @@ export class PostController {
   @ResponseMessage('Create post successfully')
   create(@Body() createPostDto: CreatePostDto) {
     return this.postService.create(createPostDto);
+  }
+
+  @Post('like')
+  @ResponseMessage('Like post successfully')
+  likePost(@Request() req: RequestWithUser, @Body() likePostDto: LikePostDto) {
+    return this.postService.like(req.user._id, likePostDto);
   }
 
   @Patch(':id')
