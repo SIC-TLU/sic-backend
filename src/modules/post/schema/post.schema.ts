@@ -16,6 +16,12 @@ export class Post {
   @Prop({ default: STATUS_POST.public })
   status: string;
 
+  @Prop({ default: 0 })
+  likeCount: number;
+
+  @Prop({ default: [], ref: 'users' })
+  likeUserIds: string[];
+
   @Prop({ default: true })
   isPublic: boolean;
 

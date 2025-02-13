@@ -6,10 +6,15 @@ import { Model, Types } from 'mongoose';
 import { getInfo } from '@/utils';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { STATUS_POST } from '@/constant';
+import { LikePostDto } from './dto/like-post.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
+  constructor(
+    @InjectModel(Post.name) private postModel: Model<Post>,
+    private usersService: UsersService,
+  ) {}
 
   async create(createPostDto: CreatePostDto) {
     const createdPost = await this.postModel.create({
@@ -69,6 +74,31 @@ export class PostService {
     if (foundPost.userId !== userId.toString()) throw new BadRequestException();
 
     await foundPost.deleteOne();
+
+    return {};
+  }
+
+  async like(userId: Types.ObjectId, { postId }: LikePostDto) {
+    const foundUser = await this.usersService.findById(userId.toString());
+    if (!foundUser) throw new BadRequestException();
+
+    const foundPost = await this.postModel.findById(postId);
+    if (!foundPost) throw new BadRequestException();
+
+    if (
+      foundPost.likeUserIds &&
+      foundPost.likeUserIds.includes(userId.toString())
+    ) {
+      await foundPost.updateOne({
+        $inc: { likeCount: -1 },
+        $pull: { likeUserIds: userId },
+      });
+    } else {
+      await foundPost.updateOne({
+        $inc: { likeCount: 1 },
+        $push: { likeUserIds: userId },
+      });
+    }
 
     return {};
   }
