@@ -22,16 +22,17 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     this.client.disconnect();
   }
 
-  async set(key: string, value: string, ttl?: number): Promise<void> {
+  async set(key: string, value: any, ttl?: number): Promise<void> {
     if (ttl) {
-      await this.client.set(key, value, 'EX', ttl);
+      await this.client.set(key, JSON.stringify(value), 'EX', ttl);
     } else {
       await this.client.set(key, value);
     }
   }
 
   async get(key: string): Promise<string | null> {
-    return await this.client.get(key);
+    const data = await this.client.get(key);
+    return data ? JSON.parse(data) : null;
   }
 
   async del(key: string): Promise<void> {

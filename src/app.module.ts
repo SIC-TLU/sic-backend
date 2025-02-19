@@ -13,6 +13,7 @@ import { RolesGuard } from './auth/roles.guard';
 import { User, UserSchema } from './modules/users/schemas/user.schema';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [
