@@ -6,7 +6,4 @@ export class GetSchedule {
 
   @IsNotEmpty()
   refreshToken: string;
-
-  @IsNotEmpty()
-  semesterId: number;
 }
