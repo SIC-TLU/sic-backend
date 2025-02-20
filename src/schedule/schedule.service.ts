@@ -47,13 +47,8 @@ export class ScheduleService {
     }
   }
 
-  async getSchedule({
-    accessToken,
-    refreshToken,
-    semesterId,
-  }: GetSchedule): Promise<any> {
-    if (!accessToken || !refreshToken || !semesterId)
-      throw new BadRequestException();
+  async getSchedule({ accessToken, refreshToken }: GetSchedule): Promise<any> {
+    if (!accessToken || !refreshToken) throw new BadRequestException();
 
     const cacheKey = `schedule_${accessToken}`;
 
@@ -61,9 +56,11 @@ export class ScheduleService {
     const cacheData = await this.redisService.get(cacheKey);
     if (cacheData) return cacheData;
 
+    const semester = await this.getSemester(accessToken);
+
     try {
       const response = await axios.get(
-        `${this.BASE_URL}/education/api/StudentCourseSubject/studentLoginUser/${semesterId}`,
+        `${this.BASE_URL}/education/api/StudentCourseSubject/studentLoginUser/${semester.id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -83,6 +80,39 @@ export class ScheduleService {
       return response.data;
     } catch (error) {
       throw new InternalServerErrorException('Error fetching schedule');
+    }
+  }
+
+  private async getSemester(accessToken: string): Promise<any> {
+    if (!accessToken) throw new BadRequestException();
+
+    const cacheKey = `semester_${accessToken}`;
+
+    // Check Redis cache first
+    const cacheData = await this.redisService.get(cacheKey);
+    if (cacheData) return cacheData;
+
+    try {
+      const resp = await axios.get(
+        `${this.BASE_URL}/education/api/semester/semester_info`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          httpsAgent: this.agent, // Attach the same custom HTTPS agent
+        },
+      );
+
+      const semester = resp.data;
+
+      // Save data to Redis with 1 day expiration
+      await this.redisService.set(
+        cacheKey,
+        semester,
+        this.TIME_EXPIRATION_OF_CLASS_SCHEDULE,
+      );
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
     }
   }
 }
