@@ -57,6 +57,7 @@ export class ScheduleService {
     if (cacheData) return cacheData;
 
     const semester = await this.getSemester(accessToken);
+    console.log('semesterID: ', semester.id);
 
     try {
       const response = await axios.get(
@@ -111,6 +112,8 @@ export class ScheduleService {
         semester,
         this.TIME_EXPIRATION_OF_CLASS_SCHEDULE,
       );
+
+      return semester;
     } catch (err) {
       throw new InternalServerErrorException(err.message);
     }
