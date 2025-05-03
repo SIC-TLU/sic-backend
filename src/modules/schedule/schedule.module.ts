@@ -7,5 +7,6 @@ import { RedisModule } from '@/modules/redis/redis.module';
   imports: [RedisModule],
   controllers: [ScheduleController],
   providers: [ScheduleService],
+  exports: [ScheduleService],
 })
 export class ScheduleModule {}

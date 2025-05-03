@@ -1,31 +1,40 @@
-import { ROLES } from '@/constant';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { GENDER, ROLES } from '@/constant';
+
+export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
 export class User {
-  @Prop()
-  username: string;
+  @Prop({ required: true })
+  studentCode: string;
 
-  @Prop()
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop()
-  password: string;
+  @Prop({ default: null })
+  phoneNumber: string | null;
 
-  @Prop()
-  image: string;
+  @Prop({ type: String, enum: GENDER, default: null })
+  gender: string | null;
 
-  @Prop({ default: ROLES.user })
-  role: string;
+  @Prop({ required: true })
+  class: string;
+
+  @Prop({ required: true })
+  homeTown: string;
+
+  @Prop({ default: null })
+  image: string | null;
 
   @Prop({ default: false })
-  isActive: boolean;
+  isMember: boolean;
 
-  @Prop()
-  codeId: string;
-
-  @Prop()
-  codeExpired: Date;
+  @Prop({ type: String, enum: ROLES, default: ROLES.user })
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

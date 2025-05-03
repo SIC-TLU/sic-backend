@@ -47,6 +47,23 @@ export class ScheduleService {
     }
   }
 
+  async getCurrentUser({ accessToken }: { accessToken: string }) {
+    try {
+      const response = await axios.get(
+        `${this.BASE_URL}/education/api/student/getstudentbylogin`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          httpsAgent: this.agent,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching user infor!');
+    }
+  }
+
   async getSchedule({ accessToken, refreshToken }: GetSchedule): Promise<any> {
     if (!accessToken || !refreshToken) throw new BadRequestException();
 
