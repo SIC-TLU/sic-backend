@@ -7,7 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { RedisModule } from '@/modules/redis/redis.module';
-import { ScheduleModule } from '@/schedule/schedule.module';
+import { ScheduleModule } from '@/modules/schedule/schedule.module';
 
 @Module({
   imports: [

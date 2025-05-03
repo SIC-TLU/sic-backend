@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '@/modules/users/users.service';
 import { LoginDto } from './dto/login.dto';
-import { ScheduleService } from '@/schedule/schedule.service';
 import { JwtService } from '@nestjs/jwt';
 import { GENDER } from '@/constant';
+import { ScheduleService } from '@/modules/schedule/schedule.service';
 
 @Injectable()
 export class AuthService {
