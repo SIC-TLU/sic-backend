@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
@@ -13,11 +12,7 @@ import { hashPassword } from '@/helpers';
 import { ConfigService } from '@nestjs/config';
 import aqp from 'api-query-params';
 import { getInfo, isValidObjectId } from '@/utils';
-import { CreateAuthDto } from '@/auth/dto/create-auth.dto';
-import dayjs from 'dayjs';
-import { ROLES } from '@/constant';
 import { MailerService } from '@nestjs-modules/mailer';
-import { ResendCodeDto } from '@/auth/dto/resend-code.dto';
 
 @Injectable()
 export class UsersService {
@@ -50,8 +45,12 @@ export class UsersService {
     return { email: foundUser.email };
   }
 
-  async isUserExist(username: string) {
-    const hasUser = await this.userModel.exists({ username });
+  async findByStudentCode(studentCode: string) {
+    return await this.userModel.findOne({ studentCode });
+  }
+
+  async isUserExist(studentCode: string) {
+    const hasUser = await this.userModel.exists({ studentCode });
     if (hasUser) return true;
 
     return false;
@@ -65,10 +64,10 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const { username, email, password, image } = createUserDto;
+    const { studentCode, email } = createUserDto;
 
     // Check username has exist?
-    const isUserExist = await this.isUserExist(username);
+    const isUserExist = await this.isUserExist(studentCode);
     if (isUserExist) {
       throw new BadRequestException(
         'Username already exists. Please use another username',
@@ -83,18 +82,10 @@ export class UsersService {
       );
     }
 
-    // Hash password
-    const hashedPassword = await hashPassword(password);
-
-    const newUser = await this.userModel.create({
-      username,
-      email,
-      password: hashedPassword,
+    return await this.userModel.create({
+      ...createUserDto,
       role: this.configService.get<string>('ROLE_USER'),
-      image,
     });
-
-    return { _id: newUser._id };
   }
 
   async findAll(query: string, curent: number, pageSize: number) {
@@ -174,76 +165,5 @@ export class UsersService {
     }
 
     return hasUser.deleteOne();
-  }
-
-  async handleRegister(registerDto: CreateAuthDto) {
-    const { username, email, password } = registerDto;
-
-    // Check username has exist?
-    const isUsernameExist = await this.isUserExist(username);
-    if (isUsernameExist) {
-      throw new BadRequestException(
-        'Username already exists. Please user another username!',
-      );
-    }
-
-    // Check email has exist?
-    const isEmailExist = await this.isEmailExist(email);
-    if (isEmailExist) {
-      throw new BadRequestException(
-        `Email ${email} already exists. Please use another email!`,
-      );
-    }
-
-    // Hash password
-    const hashedPassword = await hashPassword(password);
-
-    const user = await this.userModel.create({
-      username,
-      email,
-      password: hashedPassword,
-      isActive: false,
-      role: ROLES.user,
-      codeId: uuidv4(),
-      codeExpired: dayjs().add(5, 'minutes'),
-    });
-
-    // Send mail
-    this.mailerService.sendMail({
-      to: user.email, // List to reciver
-      subject: 'Active your account at SIC', // Subject line
-      template: 'register',
-      context: {
-        name: user?.username ?? user?.email,
-        activationCode: user.codeId,
-      },
-    });
-
-    return { _id: user._id };
-  }
-
-  async resendCode(resendCodeDto: ResendCodeDto) {
-    const { email } = resendCodeDto;
-
-    const foundUser = await this.userModel.findOne({ email });
-    if (!foundUser) throw new BadRequestException();
-
-    foundUser.codeId = uuidv4();
-    foundUser.codeExpired = dayjs().add(5, 'minutes').toDate();
-
-    await foundUser.save();
-
-    // Send mail
-    this.mailerService.sendMail({
-      to: foundUser.email, // List to reciver
-      subject: 'Active your account at SIC', // Subject line
-      template: 'register',
-      context: {
-        name: foundUser?.username ?? foundUser?.email,
-        activationCode: foundUser.codeId,
-      },
-    });
-
-    return {};
   }
 }

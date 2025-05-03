@@ -9,7 +9,15 @@ services:
     volumes:
       - mongodb_data_container:/data/db
 
+  redis:
+    image: redis:7.2
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data_container:/data
+
 volumes:
   mongodb_data_container:
+  redis_data_container:
 
-    # docker compose -p hoidanit-mongodb-4rn up -d
+# docker compose -p sic up -d
