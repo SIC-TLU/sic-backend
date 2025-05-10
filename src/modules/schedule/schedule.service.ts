@@ -60,6 +60,7 @@ export class ScheduleService {
       );
       return response.data;
     } catch (error) {
+      if (error.status === 401) throw new UnauthorizedException();
       throw new InternalServerErrorException('Error fetching user infor!');
     }
   }
@@ -74,7 +75,6 @@ export class ScheduleService {
     if (cacheData) return cacheData;
 
     const semester = await this.getSemester(accessToken);
-    console.log('semesterID: ', semester.id);
 
     try {
       const response = await axios.get(
@@ -97,6 +97,7 @@ export class ScheduleService {
 
       return response.data;
     } catch (error) {
+      if (error.status === 401) throw new UnauthorizedException();
       throw new InternalServerErrorException('Error fetching schedule');
     }
   }
@@ -132,6 +133,7 @@ export class ScheduleService {
 
       return semester;
     } catch (err) {
+      if (err.status === 401) throw new UnauthorizedException();
       throw new InternalServerErrorException(err.message);
     }
   }
