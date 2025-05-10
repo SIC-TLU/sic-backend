@@ -8,11 +8,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { RedisModule } from '@/modules/redis/redis.module';
 import { ScheduleModule } from '@/modules/schedule/schedule.module';
+import { TokenModule } from '@/modules/token/token.module';
 
 @Module({
   imports: [
     UsersModule,
     ScheduleModule,
+    TokenModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (confgiService: ConfigService) => ({
