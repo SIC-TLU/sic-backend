@@ -6,14 +6,16 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './core/transform.interceptor';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/authUser/auth.module';
 import { PostModule } from './modules/post/post.module';
-import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
+import { JwtAuthGuard } from './auth/authUser/passport/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
 import { User, UserSchema } from './modules/users/schemas/user.schema';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ScheduleModule } from './modules/schedule/schedule.module';
+import { AuthAdminModule } from './auth/authAdmin/authAdmin.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
 
 @Module({
   imports: [
@@ -21,7 +23,10 @@ import { ScheduleModule } from './modules/schedule/schedule.module';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     UsersModule,
     AuthModule,
+    AuthAdminModule,
     PostModule,
+    ScheduleModule,
+    DepartmentsModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -58,7 +63,6 @@ import { ScheduleModule } from './modules/schedule/schedule.module';
       }),
       inject: [ConfigService],
     }),
-    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [

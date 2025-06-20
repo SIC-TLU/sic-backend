@@ -7,6 +7,7 @@ import { ScheduleService } from '@/modules/schedule/schedule.service';
 import { TokenService } from '@/modules/token/token.service';
 import { CreateRefreshTokenDto } from '@/modules/token/dto/create-refreshToken.dto';
 import { validate } from 'class-validator';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
     private readonly scheduleService: ScheduleService,
     private readonly tokenService: TokenService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async login({ studentCode, password }: LoginDto) {
@@ -42,17 +44,17 @@ export class AuthService {
       });
     }
 
-    const { _id, email } = foundUser;
-    const payload = { email, sub: _id };
+    const { _id, email, role } = foundUser;
+    const payload = { email, sub: _id, role };
 
     // Generate access token (short-lived)
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '1d', // Access token expires in 1 day
+      expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'), // Access token expires in 1 day
     });
 
     // Generate refresh token (longer-lived)
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: '7d', // Refresh token expires in 7 days
+      expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN'), // Refresh token expires in 7 days
     });
 
     // Create DTO for refresh token

@@ -17,8 +17,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    private configService: ConfigService,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly configService: ConfigService,
     private readonly mailerService: MailerService,
   ) {}
 

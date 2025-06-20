@@ -12,6 +12,7 @@ import {
 import { validate } from 'class-validator';
 import { CreateRefreshTokenDto } from './dto/create-refreshToken.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TokenService {
@@ -19,6 +20,7 @@ export class TokenService {
     @InjectModel(RefreshToken.name)
     private refreshTokenModel: Model<RefreshTokenDocument>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async saveRefreshToken(
@@ -82,10 +84,14 @@ export class TokenService {
       // Generate new access and refresh tokens
       const newPayload = { email: payload.email, sub: userId };
       const newAccessToken = this.jwtService.sign(newPayload, {
-        expiresIn: '1d',
+        expiresIn: this.configService.get<string>(
+          'JWT_ACCESS_TOKEN_EXPIRES_IN',
+        ),
       });
       const newRefreshToken = this.jwtService.sign(newPayload, {
-        expiresIn: '7d',
+        expiresIn: this.configService.get<string>(
+          'JWT_REFRESH_TOKEN_EXPIRES_IN',
+        ),
       });
 
       // Upsert the new refresh token, setting token and pushing old token to refreshTokenUsed

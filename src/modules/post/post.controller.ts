@@ -13,7 +13,7 @@ import { ResponseMessage } from '@/decorator/customize';
 import { Role, Roles } from '@/decorator/roles.decorator';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Request as ExpressRequest } from 'express';
-import { UserType } from '@/auth/auth';
+import { UserType } from '@/auth/authUser/auth';
 import { LikePostDto } from './dto/like-post.dto';
 
 interface RequestWithUser extends ExpressRequest {

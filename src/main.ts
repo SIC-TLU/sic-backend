@@ -27,8 +27,8 @@ async function bootstrap() {
 
   // 🚀 Swagger Setup
   const config = new DocumentBuilder()
-    .setTitle('My API')
-    .setDescription('API documentation for my project')
+    .setTitle('SIC API')
+    .setDescription('API documentation for SIC project')
     .setVersion('1.0')
     .addBearerAuth() // Optional: for JWT auth support
     .build();
