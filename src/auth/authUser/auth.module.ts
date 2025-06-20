@@ -21,7 +21,7 @@ import { TokenModule } from '@/modules/token/token.module';
         global: true,
         secret: confgiService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: confgiService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
+          expiresIn: confgiService.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
         },
       }),
       inject: [ConfigService],

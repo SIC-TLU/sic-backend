@@ -8,6 +8,7 @@ import {
 } from './schemas/refresh-token.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RefreshTokenRepo } from './token.repo';
 
 @Module({
   imports: [
@@ -20,14 +21,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         global: true,
         secret: confgiService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: confgiService.get<string>('JWT_ACCESS_TOKEN_EXPIRED'),
+          expiresIn: confgiService.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
         },
       }),
       inject: [ConfigService],
     }),
   ],
   controllers: [TokenController],
-  providers: [TokenService],
-  exports: [TokenService],
+  providers: [TokenService, RefreshTokenRepo],
+  exports: [TokenService, RefreshTokenRepo],
 })
 export class TokenModule {}

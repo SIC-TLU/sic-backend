@@ -1,6 +1,6 @@
-import { UserType } from '@/auth/auth';
+import { AdminType } from '@/auth/authAdmin/auth';
 import { Request } from 'express';
 
-export interface RequestWithUser extends Request {
-  user: UserType;
+export interface RequestWithAdmin extends Request {
+  user: AdminType;
 }
