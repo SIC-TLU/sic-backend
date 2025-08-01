@@ -16,6 +16,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { AuthAdminModule } from './auth/authAdmin/authAdmin.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { DepartmentsModule } from './modules/departments/departments.module';
       }),
       inject: [ConfigService],
     }),
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [
