@@ -2,20 +2,28 @@ import { config } from 'dotenv';
 config();
 
 export const ROLES = {
-  user: process.env.ROLE_USER || 'User',
-  clubNember: process.env.ROLE_CLUBMEMBER || 'ClubMember',
-  clubCommitteHeads: process.env.ROLE_CLUBCOMMITTEHEADS || 'ClubCommitteHeads',
-  admin: process.env.ROLE_ADMIN || 'Admin',
-  superAdmin: process.env.ROLE_SUPERADMIN || 'SuperAdmin',
+  USER: process.env.ROLE_USER || 'User',
+  CLUB_MEMBER: process.env.ROLE_CLUBMEMBER || 'ClubMember',
+  CLUB_COMMITTEE_HEADS:
+    process.env.ROLE_CLUBCOMMITTEHEADS || 'ClubCommitteHeads',
+  ADMIN: process.env.ROLE_ADMIN || 'Admin',
+  SUPER_ADMIN: process.env.ROLE_SUPERADMIN || 'SuperAdmin',
+};
+
+export const STATUS_USER = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  PENDING: 'PENDING',
+  BANNED: 'BANNED',
 };
 
 export const GENDER = {
-  male: 'MALE',
-  female: 'FEMALE',
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
 };
 
 export const STATUS_POST = {
-  public: 'public',
-  draft: 'draft',
-  deleted: 'deleted',
+  PUBLIC: 'PUBLIC',
+  DRAFT: 'DRAFT',
+  DELETED: 'DELETED',
 };

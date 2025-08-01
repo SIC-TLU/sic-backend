@@ -3,12 +3,9 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { VerifyAccountDto } from './dto/verify-account.dto';
 import { comparePassword, hashPassword } from '@/helpers';
 import { AdminType } from './auth';
 import { JwtService } from '@nestjs/jwt';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import dayjs from 'dayjs';
 import { ResendCodeDto } from './dto/resend-code.dto';
 import { RedisService } from '@/modules/redis/redis.service';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -86,10 +83,6 @@ export class AuthService {
     };
   }
 
-  async handleAdminRegister(registerDto: CreateAuthDto) {
-    return await this.adminsService.handleRegister(registerDto);
-  }
-
   async logout(userId: string) {
     const hasUser = await this.adminRepo.findOneById(userId);
     if (!hasUser) throw new BadRequestException('User not found');
@@ -99,22 +92,6 @@ export class AuthService {
 
     // Delete the refresh token
     await hasToken.deleteOne();
-
-    return {};
-  }
-
-  async verifyAccount(verifyAccountDto: VerifyAccountDto) {
-    const { username, codeId } = verifyAccountDto;
-
-    const foundUser = await this.adminRepo.findOneByUsername(username);
-    if (!foundUser) throw new BadRequestException();
-
-    if (codeId !== foundUser.codeId)
-      throw new BadRequestException('The code invalid or expried!');
-    if (!dayjs().isBefore(foundUser.codeExpired))
-      throw new BadRequestException('The code invalid or expried!');
-
-    await foundUser.updateOne({ isActive: true });
 
     return {};
   }

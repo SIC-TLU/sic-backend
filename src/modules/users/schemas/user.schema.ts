@@ -33,7 +33,7 @@ export class User {
   @Prop({ default: false })
   isMember: boolean;
 
-  @Prop({ type: String, enum: ROLES, default: ROLES.user })
+  @Prop({ type: String, enum: ROLES, default: ROLES.USER })
   role: string;
 }
 

@@ -19,7 +19,7 @@ export class PostService {
   async create(createPostDto: CreatePostDto) {
     const createdPost = await this.postModel.create({
       ...createPostDto,
-      status: STATUS_POST.public,
+      status: STATUS_POST.PUBLIC,
     });
 
     return getInfo({

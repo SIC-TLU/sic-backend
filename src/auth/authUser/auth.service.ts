@@ -37,7 +37,7 @@ export class AuthService {
         name: responseUser.displayName,
         email: responseUser.email,
         phoneNumber: responseUser.phoneNumber,
-        gender: responseUser.gender === 'M' ? GENDER.male : GENDER.female,
+        gender: responseUser.gender === 'M' ? GENDER.MALE : GENDER.FEMALE,
         class: responseUser.enrollmentClass.className,
         homeTown: responseUser.birthPlace,
         image: responseUser.photo,
