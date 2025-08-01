@@ -16,8 +16,6 @@ import {
 } from '@nestjs/swagger';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { AuthService } from './authAdmin.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { VerifyAccountDto } from './dto/verify-account.dto';
 import { ResendCodeDto } from './dto/resend-code.dto';
 import { RequestWithAdmin } from '@/common/interfaces/request-with-user.interface';
 
@@ -45,27 +43,6 @@ export class AuthController {
   @ResponseMessage('Login successfully')
   async handleLogin(@Request() req: RequestWithAdmin) {
     return this.authService.login(req.user);
-  }
-
-  @Public()
-  @Post('register')
-  @ApiOperation({ summary: 'Admin Registration' })
-  @ApiResponse({ status: 201, description: 'Register successfully' })
-  @ApiBody({ type: CreateAuthDto })
-  @ResponseMessage('Register successfully')
-  register(@Body() registerDto: CreateAuthDto) {
-    return this.authService.handleAdminRegister(registerDto);
-  }
-
-  @Public()
-  @Post('verify')
-  @HttpCode(200)
-  @ApiOperation({ summary: 'Verify Account' })
-  @ApiResponse({ status: 200, description: 'Verify account successfully' })
-  @ApiBody({ type: VerifyAccountDto })
-  @ResponseMessage('Verify account successfully')
-  verify(@Body() verifyDto: VerifyAccountDto) {
-    return this.authService.verifyAccount(verifyDto);
   }
 
   @Public()

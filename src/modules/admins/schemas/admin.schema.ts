@@ -1,4 +1,4 @@
-import { ROLES } from '@/constant';
+import { ROLES, STATUS_USER } from '@/constant';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ timestamps: true })
@@ -24,8 +24,11 @@ export class Admin {
   @Prop({ type: String, default: null })
   address: string | null;
 
-  @Prop({ default: ROLES.superAdmin })
+  @Prop({ default: ROLES.SUPER_ADMIN })
   role: string;
+
+  @Prop({ enum: STATUS_USER, default: STATUS_USER.ACTIVE })
+  status: string;
 
   @Prop({ default: false })
   isActive: boolean;

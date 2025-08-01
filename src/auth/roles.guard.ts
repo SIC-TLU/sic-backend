@@ -1,7 +1,6 @@
 import { ROLES } from '@/constant';
 import { Role, ROLES_KEY } from '@/decorator/roles.decorator';
 import { User } from '@/modules/users/schemas/user.schema';
-import { UsersService } from '@/modules/users/users.service';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,7 +11,6 @@ export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     @InjectModel(User.name) private userModel: Model<User>,
-    private usersService: UsersService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -26,8 +24,8 @@ export class RolesGuard implements CanActivate {
 
     if (!user || !user.role) return false;
 
-    const isTrue = requiredRoles.some((role, index) => {
-      return user.role === ROLES[requiredRoles[index]];
+    const isTrue = requiredRoles.some((roleName) => {
+      return user.role === ROLES[roleName];
     });
 
     return isTrue;

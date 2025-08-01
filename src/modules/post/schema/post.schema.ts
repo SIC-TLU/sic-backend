@@ -13,7 +13,7 @@ export class Post {
   @Prop({ min: 20 })
   content: string;
 
-  @Prop({ default: STATUS_POST.public })
+  @Prop({ default: STATUS_POST.DRAFT })
   status: string;
 
   @Prop({ default: 0 })

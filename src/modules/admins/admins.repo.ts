@@ -52,4 +52,8 @@ export class AdminRepo {
 
     return false;
   }
+
+  async create(data: Partial<Admin>) {
+    return this.adminModel.create(data);
+  }
 }
